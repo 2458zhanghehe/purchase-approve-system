@@ -1,4 +1,4 @@
-package abc.zyf.springboot_zyf;
+package abc.zyf.purchaseapprovesystem;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
