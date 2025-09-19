@@ -22,4 +22,7 @@ mybatis-plus:
       id-type: input
       field-strategy: ignored
 
+snowflake:
+  worker-id: 1
+  datacenter-id: 1
 
