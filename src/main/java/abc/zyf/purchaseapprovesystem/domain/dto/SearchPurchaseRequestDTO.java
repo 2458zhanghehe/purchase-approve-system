@@ -4,32 +4,24 @@ import abc.zyf.purchaseapprovesystem.domain.entity.PurchaseRequestDetail;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-@Data
+
+//分页条件查询
 @AllArgsConstructor
 @NoArgsConstructor
-public class PurchaseRequestDTO {
-
-    private Long id;
-
-    private Long applicantId;
-
+@Data
+public class SearchPurchaseRequestDTO {
     private String applicantName;
 
     private Integer purchaseTypeId;   //1表示办公用品 2表示IT设备  3表示市场活动
 
-    private BigDecimal budgetAmount;
+    private Date startDate;
 
-    private Integer status;   //1表示待审批 2表示审批中 3表示已通过 4表示已驳回
+    private Date endDate;
 
-    private List<PurchaseRequestDetail> details;
+    private int pageNum;
 
-    //备注说明
-    private String remark;
-
-    private Date applyTime;
+    private int pageSize;
 }

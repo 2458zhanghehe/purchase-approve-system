@@ -1,11 +1,13 @@
 package abc.zyf.purchaseapprovesystem.domain.vo;
 
+import abc.zyf.purchaseapprovesystem.domain.entity.PurchaseRequestDetail;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -26,6 +28,8 @@ public class PurchaseRequestVO {
 
     private BigDecimal budgetAmount;
 
+    //明细
+    private List<PurchaseRequestDetail> details;
 
     private Integer status;
 
