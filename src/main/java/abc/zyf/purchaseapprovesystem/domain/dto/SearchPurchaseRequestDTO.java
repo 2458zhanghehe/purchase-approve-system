@@ -1,11 +1,10 @@
 package abc.zyf.purchaseapprovesystem.domain.dto;
 
-import abc.zyf.purchaseapprovesystem.domain.entity.PurchaseRequestDetail;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.Date;
-import java.util.List;
 
 
 //分页条件查询

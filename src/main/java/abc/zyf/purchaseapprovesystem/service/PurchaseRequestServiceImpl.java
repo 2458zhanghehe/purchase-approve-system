@@ -9,9 +9,7 @@ import abc.zyf.purchaseapprovesystem.mapper.PurchaseRequestDetailMapper;
 import abc.zyf.purchaseapprovesystem.mapper.PurchaseRequestMapper;
 import abc.zyf.purchaseapprovesystem.utils.SnowflakeIdWorker;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang.StringUtils;
@@ -109,7 +107,7 @@ public class PurchaseRequestServiceImpl extends ServiceImpl<PurchaseRequestMappe
             return null;
         }
         List<PurchaseRequest> purchaseRequestList = ipage.getRecords();
-        List<PurchaseRequestVO> purchaseRequestVOList = new ArrayList<PurchaseRequestVO>();
+        List<PurchaseRequestVO> purchaseRequestVOList = new ArrayList<>();
         //查询采购明细
         for(PurchaseRequest request : purchaseRequestList) {
             PurchaseRequestVO purchaseRequestVO = new PurchaseRequestVO();
