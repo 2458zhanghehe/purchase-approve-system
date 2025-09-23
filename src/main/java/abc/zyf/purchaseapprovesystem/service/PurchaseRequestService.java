@@ -20,4 +20,6 @@ public interface PurchaseRequestService extends IService<PurchaseRequest> {
     List<PurchaseRequestVO> pageQuery(SearchPurchaseRequestDTO searchPurchaseRequestDTO);
 
     List<PurchaseRequestVO> getListByApplicantId(Long applicantId);
+
+    PurchaseRequestVO getByIdWithDetails(Long id);
 }

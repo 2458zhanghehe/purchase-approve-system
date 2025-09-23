@@ -2,13 +2,18 @@ package abc.zyf.purchaseapprovesystem.service;
 
 import abc.zyf.purchaseapprovesystem.domain.dto.PurchaseRequestDTO;
 import abc.zyf.purchaseapprovesystem.domain.dto.SearchPurchaseRequestDTO;
+import abc.zyf.purchaseapprovesystem.domain.entity.ApprovalRecord;
+import abc.zyf.purchaseapprovesystem.domain.entity.ApprovalRecordDetail;
 import abc.zyf.purchaseapprovesystem.domain.entity.PurchaseRequest;
 import abc.zyf.purchaseapprovesystem.domain.entity.PurchaseRequestDetail;
 import abc.zyf.purchaseapprovesystem.domain.vo.PurchaseRequestVO;
+import abc.zyf.purchaseapprovesystem.mapper.ApprovalRecordDetailMapper;
+import abc.zyf.purchaseapprovesystem.mapper.ApprovalRecordMapper;
 import abc.zyf.purchaseapprovesystem.mapper.PurchaseRequestDetailMapper;
 import abc.zyf.purchaseapprovesystem.mapper.PurchaseRequestMapper;
 import abc.zyf.purchaseapprovesystem.utils.SnowflakeIdWorker;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -31,21 +36,37 @@ public class PurchaseRequestServiceImpl extends ServiceImpl<PurchaseRequestMappe
     @Autowired
     private PurchaseRequestDetailMapper purchaseRequestDetailMapper;
 
+    @Autowired
+    private ApprovalRecordMapper approvalRecordMapper;
+
+    @Autowired
+    private ApprovalRecordDetailMapper approvalRecordDetailMapper;
+
+
 
     @Override
     public PurchaseRequestVO insertPurchaseRequest(PurchaseRequestDTO purchaseRequestDTO) {
 
+        //1.插入主表
         PurchaseRequest purchaseRequest = new PurchaseRequest();
         BeanUtils.copyProperties(purchaseRequestDTO, purchaseRequest);
         purchaseRequest.setCreateTime(new Date());
+        purchaseRequest.setStatus(1); //1表示待审批
         purchaseRequest.setId(snowflakeIdWorker.nextId());
         save(purchaseRequest);
 
+        //2.插入采购申请明细表
         for(PurchaseRequestDetail detail : purchaseRequestDTO.getDetails()) {
             detail.setRequestId(purchaseRequest.getId());
             detail.setId(snowflakeIdWorker.nextId());
             purchaseRequestDetailMapper.insert(detail);
         }
+
+        //3.保存审批记录
+        ApprovalRecord approvalRecord = new ApprovalRecord();
+        approvalRecord.setId(snowflakeIdWorker.nextId());
+        approvalRecord.setRequestId(purchaseRequest.getId());
+        approvalRecord.setApprovalStep(1); //1部门经理审批  2财务审批  3总经理审批
 
         PurchaseRequestVO purchaseRequestVO = new PurchaseRequestVO();
         BeanUtils.copyProperties(purchaseRequest, purchaseRequestVO);
@@ -70,6 +91,17 @@ public class PurchaseRequestServiceImpl extends ServiceImpl<PurchaseRequestMappe
                 purchaseRequestDetailMapper.updateById(detail);
             }
         }
+
+        //3.删除审批记录明细，重新开始审批
+        approvalRecordMapper.update(null, new UpdateWrapper<ApprovalRecord>().lambda()
+                .eq(ApprovalRecord::getRequestId, purchaseRequest.getId())
+                .set(ApprovalRecord::getApprovalStep, 1));
+        //获取id
+        Long approvalRecordId = approvalRecordMapper.selectOne(new QueryWrapper<ApprovalRecord>().lambda()
+                .eq(ApprovalRecord::getRequestId, purchaseRequest.getId())).getId();
+        approvalRecordDetailMapper.delete(new QueryWrapper<ApprovalRecordDetail>().lambda()
+                .eq(ApprovalRecordDetail::getApprovalId, approvalRecordId));
+
     }
 
     @Override
@@ -79,6 +111,15 @@ public class PurchaseRequestServiceImpl extends ServiceImpl<PurchaseRequestMappe
         //2.删除明细
         purchaseRequestDetailMapper.delete(new QueryWrapper<PurchaseRequestDetail>().lambda()
                 .eq(PurchaseRequestDetail::getId, id));
+        //3.删除审批记录
+        ApprovalRecord approvalRecord = approvalRecordMapper.selectOne(new QueryWrapper<ApprovalRecord>().lambda()
+                .eq(ApprovalRecord::getRequestId, id));
+        if(approvalRecord == null){
+            return;
+        }
+        approvalRecordDetailMapper.delete(new QueryWrapper<ApprovalRecordDetail>().lambda()
+                .eq(ApprovalRecordDetail::getApprovalId, approvalRecord.getId()));
+        approvalRecordMapper.deleteById(approvalRecord.getId());
     }
 
     @Override
@@ -135,5 +176,19 @@ public class PurchaseRequestServiceImpl extends ServiceImpl<PurchaseRequestMappe
             purchaseRequestVOList.add(purchaseRequestVO);
         }
         return purchaseRequestVOList;
+    }
+
+    @Override
+    public PurchaseRequestVO getByIdWithDetails(Long id) {
+        PurchaseRequest purchaseRequest = getById(id);
+        if(purchaseRequest == null){
+            return null;
+        }
+        PurchaseRequestVO purchaseRequestVO = new PurchaseRequestVO();
+        BeanUtils.copyProperties(purchaseRequest, purchaseRequestVO);
+        List<PurchaseRequestDetail> details = purchaseRequestDetailMapper.selectList(new QueryWrapper<PurchaseRequestDetail>().lambda()
+                .eq(PurchaseRequestDetail::getRequestId, purchaseRequest.getId()));
+        purchaseRequestVO.setDetails(details);
+        return purchaseRequestVO;
     }
 }

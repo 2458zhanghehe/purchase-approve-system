@@ -32,6 +32,7 @@ public class ApprovalRecord {
      * This field corresponds to the database column approval_record.approval_step
      *
      * @mbg.generated Thu Sep 18 22:51:42 CST 2025
+     * 1部门经理审批  2财务审批  3总经理审批
      */
     private Integer approvalStep;
 

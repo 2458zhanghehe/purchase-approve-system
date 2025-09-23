@@ -53,7 +53,7 @@ public class ApprovalRecordDetail {
      *
      * @mbg.generated Thu Sep 18 22:51:42 CST 2025
      */
-    private Integer approvalResult;
+    private Integer approvalResult;   //1表示通过， 2表示驳回
 
     /**
      *

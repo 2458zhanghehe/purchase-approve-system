@@ -26,3 +26,10 @@ snowflake:
   worker-id: 1
   datacenter-id: 1
 
+minio:
+  accessKey: minioadmin
+  secretKey: minioadmin
+  bucketName: purchaseapprove
+  endpoint: http://localhost:9005
+  readPath: http://localhost:9005
+

@@ -24,8 +24,6 @@ public class PurchaseRequestDTO {
 
     private BigDecimal budgetAmount;
 
-    private Integer status;   //1表示待审批 2表示审批中 3表示已通过 4表示已驳回
-
     private List<PurchaseRequestDetail> details;
 
     //备注说明
