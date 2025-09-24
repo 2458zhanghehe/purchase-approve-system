@@ -2,4 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="abc.zyf.purchaseapprovesystem.mapper.PurchaseOrderMapper">
+    <select id="getTotalAmountByStatus" resultType="java.math.BigDecimal">
+        SELECT SUM(total_amount)
+        FROM purchase_order
+        WHERE request_id IN
+        <foreach item="id" collection="requestIds" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+
+    <select id="getTotalAmountDaily" resultType="java.math.BigDecimal">
+        SELECT SUM(total_amount)
+        FROM purchase_order
+        WHERE create_time &gt;= #{startDate}
+          AND create_time &lt;= #{endDate}
+    </select>
 </mapper>

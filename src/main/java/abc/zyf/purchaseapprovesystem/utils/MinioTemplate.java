@@ -1,5 +1,4 @@
 package abc.zyf.purchaseapprovesystem.utils;
-import abc.zyf.purchaseapprovesystem.config.MinioConfig;
 import abc.zyf.purchaseapprovesystem.config.MinioConfigProperties;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;

@@ -33,3 +33,12 @@ minio:
   endpoint: http://localhost:9005
   readPath: http://localhost:9005
 
+#标黄好像也能读取到 或者创建配置类来设置Quartz属性，就不用写了这里
+quartz:
+  job-store-type: memory
+  scheduler:
+    instance-name: PurchaseApproveScheduler
+  thread-pool:
+    thread-count: 3
+
+
